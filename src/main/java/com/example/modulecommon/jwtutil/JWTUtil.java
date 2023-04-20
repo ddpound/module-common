@@ -12,7 +12,9 @@ import com.google.api.client.json.gson.GsonFactory;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -64,12 +66,10 @@ public class JWTUtil {
     public String makeAuthToken(String username, int userid){
         log.info("now New make Token : " + username);
         return JWT.create()
-                .withSubject(username)
                 .withIssuer("nowAuction")
                 .withClaim("userId", userid)
-                .withClaim("username", username) // 유저이름
                 .withClaim("exp", Instant.now().getEpochSecond()+AUTH_TIME)
-                .sign(Algorithm.HMAC256(myKey));
+                .sign(Algorithm.HMAC256(myKey+username));
 
         // EpochSecond 에폭세컨드를 이용해 exp이름을 붙여 직접 시간을 지정해준다
     }
@@ -81,11 +81,10 @@ public class JWTUtil {
     public String makeRfreshToken(String username){
         log.info("now New make refresh Token : " + username);
         return JWT.create()
-                .withSubject(username)
                 .withIssuer("nowAuction")
                 .withClaim("refresh","refresh")
                 .withClaim("exp", Instant.now().getEpochSecond()+REFRESH_TIME)
-                .sign(Algorithm.HMAC256(myKey));
+                .sign(Algorithm.HMAC256(myKey+username));
 
         // EpochSecond 에폭세컨드를 이용해 exp이름을 붙여 직접 시간을 지정해준다
         // 만료시간은 리프레쉬 토큰 시간에 맞춰서 넣는다
