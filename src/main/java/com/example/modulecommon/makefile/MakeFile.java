@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+
+/**
+ * img url을 저장하는 부분 코드는 총 3군대, 수정할때 주의해주세요
+ * */
 @Log4j2
 @Component
 public class MakeFile {
@@ -96,13 +100,20 @@ public class MakeFile {
             FileUtils.deleteQuietly(targetFile);
         }
 
-        // 배포때는 수정해야할 듯
-        String mainurl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/";
+        String mainurl = "";
+
+        if(AllStaticStatus.osName.contains("win")){
+            // 배포때는 수정해야할 듯
+            mainurl = AllStaticStatus.httpOrHttps+"://"+request.getServerName()+":"+request.getServerPort()+"/";
+        }else{
+            mainurl = AllStaticStatus.getServerName;
+        }
+
+
 
         // 총 두가지를 저장해내야하니 두개를 리턴
         // 한가지는 일단 http를 통한 정적 자료를 반환할수있는 경로 주소
         // 나머지 한가지는 파일 위치 주소
-
         Map<Integer, String> returnPathNams = new HashMap<>();
 
         returnPathNams.put(1, mainurl+saveFolderName.substring(saveFolderName.indexOf("Jang")) + savedFileName);
@@ -138,7 +149,14 @@ public class MakeFile {
             targetFile = new File(temporarySavePath + saveFileName);
 
             // url주소를 보내줘야하니
-            String mainurl = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/";
+            String mainurl = "";
+
+            if(AllStaticStatus.osName.contains("win")){
+                // 배포때는 수정해야할 듯
+                mainurl = AllStaticStatus.httpOrHttps+"://"+request.getServerName()+":"+request.getServerPort()+"/";
+            }else{
+                mainurl = AllStaticStatus.getServerName;
+            }
 
             InputStream fileStream = multipartFile.getInputStream();
             FileUtils.copyInputStreamToFile(fileStream, targetFile);
@@ -303,7 +321,7 @@ public class MakeFile {
     public void deleteTemporary(int fileId){
 
         // 임시파일 경로에 해당 아이디의 파일이 있음
-        String deletePath = AllStaticStatus.temporaryImageFiles + File.separator + fileId;
+        String deletePath = AllStaticStatus.temporaryImageFiles + fileId;
 
         // 결로지정
         File folder = new File(deletePath);
@@ -374,7 +392,7 @@ public class MakeFile {
      *
      * */
     public void folderPathImageDelete(String folderPath){
-
+        log.info("try delete foler, by Make File");
         File folder = new File(folderPath);
 
         try {
@@ -410,7 +428,14 @@ public class MakeFile {
     // 파일을 옮기는 도중에 옮긴 파일경로 수정을 위해 따로 만들어둠
     public String changeContentImageUrlPath(int userId, String content,String filefolderPath ,  ServletRequest request){
 
-        String mainurl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/";
+        String mainurl = "";
+
+        if(AllStaticStatus.osName.contains("win")){
+            // 배포때는 수정해야할 듯
+            mainurl = AllStaticStatus.httpOrHttps+"://"+request.getServerName()+":"+request.getServerPort()+"/";
+        }else{
+            mainurl = AllStaticStatus.getServerName;
+        }
 
         // http://localhost:5000/Temporrary_files/1/ 까지의 파일경로를 변경해주자
         // 바꿔줄 경로

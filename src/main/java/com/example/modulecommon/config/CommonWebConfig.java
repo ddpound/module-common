@@ -20,14 +20,18 @@ public class CommonWebConfig  implements WebMvcConfigurer {
         // OS체크 부분
         AllStaticStatus.osName = System.getProperty("os.name").toLowerCase();
 
-        if(AllStaticStatus.osName .contains("win")){
+        AllStaticStatus.getServerName="https://nowauctiontest.shop/";
+
+        if(AllStaticStatus.osName.contains("win")){
             log.info("Now Os Name is window");
             AllStaticStatus.saveImageFileRoot =  "C:"+ File.separator+"Jang_SaveImage/";
             AllStaticStatus.temporaryImageFiles = "C:"+ File.separator+"Temporary_files/";
+            AllStaticStatus.httpOrHttps= "http";
         }else{
             log.info("Now Os Name is linux");
             AllStaticStatus.saveImageFileRoot = "/home/youseongjung/Templates/Jang_SaveImage/";
             AllStaticStatus.temporaryImageFiles = "/home/youseongjung/Templates/Temporary_files/";
+            AllStaticStatus.httpOrHttps= "https";
         }
 
         if(AllStaticStatus.osName.contains("win")){
